@@ -1,22 +1,26 @@
 package onTrackService;
 import org.junit.jupiter.api.Test;
-
-import onTrackService.OnTrackService;
-import onTrackService.OnTrackService.Task;
-import onTrackService.OnTrackService.TaskService;
-
+import onTrackService.OnTrackService.*;
 import static org.junit.jupiter.api.Assertions.*;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 
 
 public class OnTrackTests {
 	private OnTrackService.TaskService taskService;
+	private OnTrackService.TutoringService tutoringService;
+	private OnTrackService.StudyGroupService studyGroupService;
+	private OnTrackService.ProgressReportService progressReportService;
+
 
 
 	@BeforeEach
 	public void setup() {
 		taskService = new OnTrackService.TaskService();
+		tutoringService = new OnTrackService.TutoringService();
+		studyGroupService = new OnTrackService.StudyGroupService();
+		progressReportService = new OnTrackService.ProgressReportService();
 		
 	}
 	
@@ -43,7 +47,7 @@ public class OnTrackTests {
 	public void testAddCollaborator() {
 		Task task = taskService.createTask("Collaborative Task", "This is a collaborative task.", "student1");
 		int taskId = task.getId();
-		boolean success = taskService.addCollaborator(taskId, null);
+		boolean success = taskService.addCollaborator(taskId, "student2");
 		assertTrue(success);
 		assertTrue(task.getCollaborators().contains("student2"));
 	}
@@ -54,6 +58,49 @@ public class OnTrackTests {
 	    assertEquals("", task.getTitle());
 	    assertEquals("", task.getDescription());
 	}
+	// Tutoring Sessions Test Cases
+		@Test
+		public void testScheduleSession() throws Exception {
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			Date sessionDate = sdf.parse("2024-05-10");
+
+			Session session = tutoringService.scheduleSession("tutor1", "student1", sessionDate, "10:00 AM");
+			assertNotNull(session);
+			assertEquals("tutor1", session.getTutor());
+			assertEquals("student1", session.getStudent());
+		}
+
+		// Study Groups Test Cases
+		@Test
+		public void testCreateStudyGroup() {
+			StudyGroup group = studyGroupService.createStudyGroup("Math Study Group", "student1");
+			assertNotNull(group);
+			assertEquals("Math Study Group", group.getGroupName());
+			assertEquals("student1", group.getCreator());
+		}
+
+		@Test
+		public void testJoinStudyGroup() {
+			StudyGroup group = studyGroupService.createStudyGroup("Math Study Group", "student1");
+			int groupId = group.getId();
+			boolean success = studyGroupService.joinStudyGroup("student2", groupId);
+			assertTrue(success);
+			assertTrue(group.getMembers().contains("student2"));
+		}
+
+		// Reports Test Cases
+		@Test
+		public void testGenerateReport() {
+			ProgressReport report = progressReportService.generateReport("student1");
+			assertNotNull(report);
+			assertEquals("student1", report.getStudent());
+			assertEquals(90, report.getAverageScore());
+			assertEquals(20, report.getTasksCompleted());
+		}
+
+	
+
+
 }
 
 

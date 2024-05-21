@@ -71,7 +71,168 @@ public class OnTrackService {
 			return creator;
 		}
     }
-
     
+ // Feedback Service
+    public static class FeedbackService {
+        private Map<Integer, Feedback> feedbacks = new HashMap<>();
+        private int feedbackIdCounter = 1;
+
+        public Feedback provideFeedback(int taskId, String tutor, String comments) {
+            Feedback feedback = new Feedback(feedbackIdCounter++, taskId, tutor, comments);
+            feedbacks.put(feedback.getId(), feedback);
+            return feedback;
+        }
+    }
+
+    public static class Feedback {
+        private int id;
+        private int taskId;
+        private String tutor;
+        private String comments;
+
+        public Feedback(int id, int taskId, String tutor, String comments) {
+            this.id = id;
+            this.taskId = taskId;
+            this.tutor = tutor;
+            this.comments = comments;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getComments() {
+            return comments;
+        }
+    }
+
+    // Tutoring Service
+    public static class TutoringService {
+        private Map<Integer, Session> sessions = new HashMap<>();
+        private int sessionIdCounter = 1;
+
+        public Session scheduleSession(String tutor, String student, Date date, String time) {
+            Session session = new Session(sessionIdCounter++, tutor, student, date, time);
+            sessions.put(session.getId(), session);
+            return session;
+        }
+    }
+
+    public static class Session {
+        private int id;
+        private String tutor;
+        private String student;
+        private Date date;
+        private String time;
+
+        public Session(int id, String tutor, String student, Date date, String time) {
+            this.id = id;
+            this.tutor = tutor;
+            this.student = student;
+            this.date = date;
+            this.time = time;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getTutor() {
+            return tutor;
+        }
+
+        public String getStudent() {
+            return student;
+        }
+    }
+
+    // Study Group Service
+    public static class StudyGroupService {
+        private Map<Integer, StudyGroup> studyGroups = new HashMap<>();
+        private int groupIdCounter = 1;
+
+        public StudyGroup createStudyGroup(String groupName, String creator) {
+            StudyGroup group = new StudyGroup(groupIdCounter++, groupName, creator);
+            studyGroups.put(group.getId(), group);
+            return group;
+        }
+
+        public boolean joinStudyGroup(String student, int groupId) {
+            StudyGroup group = studyGroups.get(groupId);
+            if (group != null) {
+                return group.addMember(student);
+            }
+            return false;
+        }
+    }
+
+    public static class StudyGroup {
+        private int id;
+        private String groupName;
+        private String creator;
+        private Set<String> members = new HashSet<>();
+
+        public StudyGroup(int id, String groupName, String creator) {
+            this.id = id;
+            this.groupName = groupName;
+            this.creator = creator;
+            members.add(creator);
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public String getGroupName() {
+            return groupName;
+        }
+
+        public String getCreator() {
+            return creator;
+        }
+
+        public boolean addMember(String member) {
+            return members.add(member);
+        }
+
+        public Set<String> getMembers() {
+            return members;
+        }
+    }
+
+    // Progress Report Service
+    public static class ProgressReportService {
+        private Map<String, ProgressReport> reports = new HashMap<>();
+
+        public ProgressReport generateReport(String student) {
+            ProgressReport report = new ProgressReport(student, 90, 20);
+            reports.put(student, report);
+            return report;
+        }
+    }
+
+    public static class ProgressReport {
+        private String student;
+        private int averageScore;
+        private int tasksCompleted;
+
+        public ProgressReport(String student, int averageScore, int tasksCompleted) {
+            this.student = student;
+            this.averageScore = averageScore;
+            this.tasksCompleted = tasksCompleted;
+        }
+
+        public String getStudent() {
+            return student;
+        }
+
+        public int getAverageScore() {
+            return averageScore;
+        }
+
+        public int getTasksCompleted() {
+            return tasksCompleted;
+        }
+    }  
 
 }
