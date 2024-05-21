@@ -3,10 +3,10 @@ name: Java CI with Maven Proj
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
 
 
 jobs:
